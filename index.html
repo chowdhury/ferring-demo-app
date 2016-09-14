@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Ferring Demo App</title>
+
+    <link href="assets/css/hover_pack.css" rel="stylesheet">
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
+    <link href="assets/css/colors/color-74c9be.css" rel="stylesheet">    
+    <link href="assets/css/animations.css" rel="stylesheet">    
+ 
+  </head>
+
+  <body>
+
+
+    <div id="headerwrap">
+    	<div class="container">
+			<div class="row centered">
+				<div class="col-lg-8 col-lg-offset-2 mt">
+					<h1 class="animation slideDown"><img class="img-responsive" src="assets/img/ferring-logo.jpg" </img></h1>
+    				<p class="mt" id="scanAnything"><button type="button" class="btn btn-cta btn-lg">SCAN</button></p>
+				</div>
+				
+			</div><!-- /row -->
+    	</div><!-- /container -->
+    </div> <!-- /headerwrap -->
+
+	<div class="container">	
+
+		<div class="row mt centered ">
+			<div id="results" class="col-lg-4 col-lg-offset-4">
+			</div>
+		</div><!-- /row -->
+			
+  <div class="container-fluid">
+    <div class="row">
+      <div id="output-area" style="display:none;">
+        <div id="header"></div>
+        <div id="results"></div>
+        <div id="product"></div>
+      </div>
+    </div>
+
+		</div><!-- /row -->
+	</div><!-- /container -->
+ 
+	  
+	<div class="container">	
+
+		<div class="row mt centered ">
+			<div class="col-lg-4 col-lg-offset-4">
+				<h3>Powered by EVRYTHNG</h3>
+			</div>
+		</div><!-- /row -->
+			
+		</div><!-- /row -->
+	</div><!-- /container -->
+ 
+
+<!-- jQuery and Bootstrap -->
+  <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js"></script>
+
+  <!--EVRYTHNG.js-->
+<script src="http://cdn.evrythng.net/toolkit/evrythng-js-sdk/evrythng.js"></script>
+
+  <!--EVRYTHNG-SCAN.js-->
+<script src="http://cdn.evrythng.net/toolkit/evrythng-js-sdk/evrythng-scan.min.js"></script>
+
+
+  <script>
+	var APP_KEY = 'PDckzBX58JCYbaUInuGHyg26tT2EL7aFu4twpiGCGqFx2CxJB0xmVCVlPiEfa2zBXzeHAJidicTLgiaX';
+
+	// Instantiate an EVRYTHNG Application Object
+	var app = new EVT.App(APP_KEY);
+
+	// Configure ScanThng
+	EVT.use(EVT.Scan);
+	EVT.Scan.setup({
+	  redirect: true,
+	  createScanAction: true,
+	  type: 'autodetect'
+	});
+
+	$('#scanAnything button').click(scanProduct);
+	//$('#clearResults button').click(clearResults);
+
+	function addResults(header, results) {
+	  $('#output-area').attr('class', 'boxed')
+	  $('#header').html('<h3>' + header + '</h3><p>');
+	  $('#results').html(results + '<p>');
+	}
+
+	function addProduct(product) {
+	  $('#product').html(product);
+	}
+
+	function clearResults() {
+	  $('#output-area').removeAttr('class');
+	  $('#header').empty();
+	  $('#results').empty();
+	  $('#product').empty();
+	}
+
+// Call Back when image detection returns an error
+function scanError(error) {
+  var message = 'A product package was not detected or was not readable.  Please make sure the packaging is unobstructed and the captured image is clear.'
+  
+  addResults('Error', message);
+  BootstrapDialog.show({
+	title: 'Scanning Error',
+    message: message,
+    buttons: [{
+   		label: 'Close',
+        action: function(dialog) {
+        	dialog.close();
+        }
+    }]
+  });
+}
+
+	// Call back when a product has been identified
+	function scanSuccess(data) {
+	  addResults('Scan Successful', JSON.stringify(data, null, 2));
+
+	  app.appUser().create({
+	    anonymous: true
+	  }).then(function(anonUser) {
+	    anonUser.product(data.evrythngId).read().then(function(product) {
+	      addProduct(JSON.stringify(product, null, 2));
+	    });
+	  });
+	}
+
+	function scanProduct() {
+	  clearResults();
+	  app.scan()
+	    .then(scanSuccess)
+	    .catch(scanError);
+	}
+
+	</script>
+
+  </body>
+</html>
