@@ -114,33 +114,31 @@
 	  $('#product').empty();
 	}
 
-
-
-// Call Back when image detection returns an error
-function scanError(error) {
-  var message = 'A product package was not detected or was not readable.  Please make sure the packaging is unobstructed and the captured image is clear.'
-  
-  addResults('Error', message);
-}
-	// Call back when a product has been identified
-	function scanSuccess(data) {
-	  addResults('Scan Successful', JSON.stringify(data, null, 2));
-
-	  app.appUser().create({
-	    anonymous: true
-	  }).then(function(anonUser) {
-	    anonUser.product(data.evrythngId).read().then(function(product) {
-	      addProduct(JSON.stringify(product, null, 2));
-	    });
-	  });
+	// Call Back when image detection returns an error
+	function scanError(error) {
+	  var message = 'A product package was not detected or was not readable.  Please make sure the packaging is unobstructed and the captured image is clear.'
+	  
+	  addResults('Error', message);
 	}
+		// Call back when a product has been identified
+		function scanSuccess(data) {
+		  addResults('Scan Successful', JSON.stringify(data, null, 2));
 
-	function scanProduct() {
-	  clearResults();
-	  app.scan()
-	    .then(scanSuccess)
-	    .catch(scanError);
-	}
+		  app.appUser().create({
+		    anonymous: true
+		  }).then(function(anonUser) {
+		    anonUser.product(data.evrythngId).read().then(function(product) {
+		      addProduct(JSON.stringify(product, null, 2));
+		    });
+		  });
+		}
+
+		function scanProduct() {
+		  clearResults();
+		  app.scan()
+		    .then(scanSuccess)
+		    .catch(scanError);
+		}
 
 	</script>
 
