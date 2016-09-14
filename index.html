@@ -26,7 +26,7 @@
     	<div class="container">
 			<div class="row centered">
 				<div class="col-lg-8 col-lg-offset-2 mt">
-					<h1 class="animation slideDown"><img class="img-responsive" src="assets/img/ferring-logo.jpg" </img></h1>
+					<h1 class="animation slideDown"><img class="img-responsive" src="assets/img/ferring-logo.jpg"></h1>
     				<p class="mt" id="scanAnything"><button type="button" class="btn btn-cta btn-lg">SCAN</button></p>
 				</div>
 				
@@ -36,7 +36,7 @@
 
 	<div class="container">	
 
-		<div class="row mt centered ">
+		<div class="row mt centered">
 			<div id="results" class="col-lg-4 col-lg-offset-4">
 			</div>
 		</div><!-- /row -->
@@ -44,7 +44,6 @@
   <div class="container-fluid">
     <div class="row">
       <div id="output-area" style="display:none;">
-        <div id="header"></div>
         <div id="results"></div>
         <div id="product"></div>
       </div>
@@ -58,7 +57,8 @@
 
 		<div class="row mt centered ">
 			<div class="col-lg-4 col-lg-offset-4">
-				<h3>Powered by EVRYTHNG</h3>
+			<h3>Powered by</h3>
+			<h2><a href="http://www.evrythng.com" target="_blank"><img src="assets/img/evt.png"></a></h2>
 			</div>
 		</div><!-- /row -->
 			
@@ -100,7 +100,7 @@
 	function addResults(header, results) {
 	  $('#output-area').attr('class', 'boxed')
 	  $('#header').html('<h3>' + header + '</h3><p>');
-	  $('#results').html(results + '<p>');
+	  $('#results').html('<h3>' + results + '</h3><p>');
 	}
 
 	function addProduct(product) {
@@ -114,23 +114,14 @@
 	  $('#product').empty();
 	}
 
+
+
 // Call Back when image detection returns an error
 function scanError(error) {
   var message = 'A product package was not detected or was not readable.  Please make sure the packaging is unobstructed and the captured image is clear.'
   
   addResults('Error', message);
-  BootstrapDialog.show({
-	title: 'Scanning Error',
-    message: message,
-    buttons: [{
-   		label: 'Close',
-        action: function(dialog) {
-        	dialog.close();
-        }
-    }]
-  });
 }
-
 	// Call back when a product has been identified
 	function scanSuccess(data) {
 	  addResults('Scan Successful', JSON.stringify(data, null, 2));
